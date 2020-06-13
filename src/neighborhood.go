@@ -27,6 +27,34 @@ const (
 	SE Side = 0
 )
 
+var (
+	ancestorsOfAlive []Neighborhood
+	ancestorsOfDead []Neighborhood
+)
+
+func init() {
+	var n Neighborhood
+	for n = 0; n < 0x200; n++ {
+		isAlive := func() {
+			ancestorsOfAlive = append(ancestorsOfAlive, n)
+		}
+		isDead := func() {
+			ancestorsOfDead = append(ancestorsOfDead, n)
+		}
+		sumbit := Sumbit(uint16(n))
+		switch {
+		case n.C() && sumbit == 4:
+			isAlive()
+		case n.C() && sumbit == 3:
+			isAlive()
+		case !n.C() && sumbit == 3:
+			isAlive()
+		default:
+			isDead()
+		}
+	}
+}
+
 func (s Side) ToStr() string {
 	switch s {
 	case NW:

@@ -168,3 +168,24 @@ func TestMatches(t *testing.T) {
 		}
 	}
 }
+
+func TestAncestors(t *testing.T) {
+	// There should be 140 neighborhoods leading to alive cell in the next turn.
+	// Those neighborhoods are:
+	// 1. living cell in the middle, exactly three living cells around. There are
+	//    8 cells around, that means there are (8 3) = 8! / (8 - 3)!3! = 56 of those.
+	// 2. living cell in the middle, exactly two living cells around. There are
+	//    (8 2) = 28 of those.
+	// 3. dead cell in the middle, exactly three living cells around, so this is
+	//    again 56.
+	// So in total there are 56+28+56 = 140 neighborhoods leading to an alive cell.
+	if l := len(ancestorsOfAlive); l != 140 {
+		t.Errorf("expected 140 ancestors of living, got: %d", l)
+	}
+
+	// There are 2^9 = 512 all possible enighborhoods, meaning there are 512-140=372
+	// neighborhoods leading to a dead cell.
+	if l := len(ancestorsOfDead); l != 372 {
+		t.Errorf("expected 372 ancestors of dead, got: %d", l)
+	}
+}
