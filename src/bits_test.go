@@ -524,7 +524,7 @@ func TestSumbit(t *testing.T) {
 		{number: 0x1ff, expected: 9},
 	} {
 		t.Run(fmt.Sprintf("Test for %x", td.number), func(t *testing.T) {
-			actual := Sum(td.number)
+			actual := Sumbit(td.number)
 			if actual != td.expected {
 				t.Errorf("excpected %d, got %d", td.expected, actual)
 			}
