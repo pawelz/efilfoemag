@@ -1,4 +1,4 @@
-package efilfoemag
+package neighborhood
 
 import (
 	"fmt"

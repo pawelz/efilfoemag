@@ -1,4 +1,4 @@
-package efilfoemag
+package bits
 
 import (
 	"fmt"

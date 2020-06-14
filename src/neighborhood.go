@@ -1,6 +1,8 @@
-package efilfoemag
+package neighborhood
 
 import "fmt"
+
+import "github.com/pawelz/efilfoemag/src/bits"
 
 type Neighborhood uint16
 
@@ -41,7 +43,7 @@ func init() {
 		isDead := func() {
 			ancestorsOfDead = append(ancestorsOfDead, n)
 		}
-		sumbit := Sumbit(uint16(n))
+		sumbit := bits.Sumbit(uint16(n))
 		switch {
 		case n.C() && sumbit == 4:
 			isAlive()

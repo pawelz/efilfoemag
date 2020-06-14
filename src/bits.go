@@ -1,4 +1,4 @@
-package efilfoemag
+package bits
 
 // Sumbit returns number of bits set to 1.
 func Sumbit(c uint16) uint16 {
