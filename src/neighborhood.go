@@ -3,6 +3,7 @@ package neighborhood
 import "fmt"
 
 import "github.com/pawelz/efilfoemag/src/bits"
+import "github.com/pawelz/efilfoemag/src/state"
 
 type Neighborhood uint16
 
@@ -45,11 +46,11 @@ func init() {
 		}
 		sumbit := bits.Sum(uint16(n))
 		switch {
-		case n.C() && sumbit == 4:
+		case n.C().IsAlive() && sumbit == 4:
 			isAlive()
-		case n.C() && sumbit == 3:
+		case n.C().IsAlive() && sumbit == 3:
 			isAlive()
-		case !n.C() && sumbit == 3:
+		case !n.C().IsAlive() && sumbit == 3:
 			isAlive()
 		default:
 			isDead()
@@ -81,49 +82,49 @@ func (s Side) ToStr() string {
 	return fmt.Sprintf("[invalid side %d]", s)
 }
 
-// NW returns true if the NW cell of the neighborhood is alive.
-func (n Neighborhood) NW() bool {
-	return n&(1<<uint(NW)) != 0
+// NW returns the state of the NW cell of the neighborhood.
+func (n Neighborhood) NW() state.State {
+	return state.Of(n&(1<<uint(NW)) != 0)
 }
 
-// N returns true if the N cell of the neighborhood is alive.
-func (n Neighborhood) N() bool {
-	return n&(1<<uint(N)) != 0
+// N returns the state of the N cell of the neighborhood.
+func (n Neighborhood) N() state.State {
+	return state.Of(n&(1<<uint(N)) != 0)
 }
 
-// NE returns true if the NE cell of the neighborhood is alive.
-func (n Neighborhood) NE() bool {
-	return n&(1<<uint(NE)) != 0
+// NE returns the state of the NE cell of the neighborhood.
+func (n Neighborhood) NE() state.State {
+	return state.Of(n&(1<<uint(NE)) != 0)
 }
 
-// W returns true if the W cell of the neighborhood is alive.
-func (n Neighborhood) W() bool {
-	return n&(1<<uint(W)) != 0
+// W returns the state of the W cell of the neighborhood.
+func (n Neighborhood) W() state.State {
+	return state.Of(n&(1<<uint(W)) != 0)
 }
 
-// C returns true if the C cell of the neighborhood is alive.
-func (n Neighborhood) C() bool {
-	return n&(1<<uint(C)) != 0
+// C returns the state of the C cell of the neighborhood.
+func (n Neighborhood) C() state.State {
+	return state.Of(n&(1<<uint(C)) != 0)
 }
 
-// E returns true if the E cell of the neighborhood is alive.
-func (n Neighborhood) E() bool {
-	return n&(1<<uint(E)) != 0
+// E returns the state of the E cell of the neighborhood.
+func (n Neighborhood) E() state.State {
+	return state.Of(n&(1<<uint(E)) != 0)
 }
 
-// SW returns true if the SW cell of the neighborhood is alive.
-func (n Neighborhood) SW() bool {
-	return n&(1<<uint(SW)) != 0
+// SW returns the state of the SW cell of the neighborhood.
+func (n Neighborhood) SW() state.State {
+	return state.Of(n&(1<<uint(SW)) != 0)
 }
 
-// S returns true if the S cell of the neighborhood is alive.
-func (n Neighborhood) S() bool {
-	return n&(1<<uint(S)) != 0
+// S returns the state of the S cell of the neighborhood.
+func (n Neighborhood) S() state.State {
+	return state.Of(n&(1<<uint(S)) != 0)
 }
 
-// SE returns true if the SE cell of the neighborhood is alive.
-func (n Neighborhood) SE() bool {
-	return n&(1<<uint(SE)) != 0
+// SE returns the state of the SE cell of the neighborhood.
+func (n Neighborhood) SE() state.State {
+	return state.Of(n&(1<<uint(SE)) != 0)
 }
 
 // Matches checks whether the other neighborhood matches the current at given distance and side.

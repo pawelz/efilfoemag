@@ -14,6 +14,13 @@ go_binary(
 )
 
 go_library(
+    name = "state",
+    srcs = ["state.go"],
+    importpath = "github.com/pawelz/efilfoemag/src/state",
+    visibility = ["//visibility:public"],
+)
+
+go_library(
     name = "bits",
     srcs = ["bits.go"],
     importpath = "github.com/pawelz/efilfoemag/src/bits",
@@ -31,6 +38,7 @@ go_library(
     srcs = ["neighborhood.go"],
     deps = [
         ":bits",
+        ":state",
     ],
     importpath = "github.com/pawelz/efilfoemag/src/neighborhood",
     visibility = ["//visibility:public"],
