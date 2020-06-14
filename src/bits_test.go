@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestSumbit(t *testing.T) {
+func TestSum(t *testing.T) {
 	for _, td := range []struct {
 		number   uint16
 		expected uint16
@@ -524,7 +524,7 @@ func TestSumbit(t *testing.T) {
 		{number: 0x1ff, expected: 9},
 	} {
 		t.Run(fmt.Sprintf("Test for %x", td.number), func(t *testing.T) {
-			actual := Sumbit(td.number)
+			actual := Sum(td.number)
 			if actual != td.expected {
 				t.Errorf("excpected %d, got %d", td.expected, actual)
 			}

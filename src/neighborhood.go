@@ -43,7 +43,7 @@ func init() {
 		isDead := func() {
 			ancestorsOfDead = append(ancestorsOfDead, n)
 		}
-		sumbit := bits.Sumbit(uint16(n))
+		sumbit := bits.Sum(uint16(n))
 		switch {
 		case n.C() && sumbit == 4:
 			isAlive()
