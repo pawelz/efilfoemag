@@ -49,3 +49,23 @@ go_test(
     srcs = ["neighborhood_test.go"],
     embed = [":neighborhood"],
 )
+
+go_library(
+    name = "canvas",
+    srcs = ["canvas.go"],
+    deps = [
+        ":bits",
+        ":state",
+    ],
+    importpath = "github.com/pawelz/efilfoemag/src/canvas",
+    visibility = ["//visibility:public"],
+)
+
+go_test(
+    name = "canvas_test",
+    srcs = ["canvas_test.go"],
+    deps = [
+        ":bits",
+    ],
+    embed = [":canvas"],
+)
