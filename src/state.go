@@ -33,3 +33,11 @@ func Of(isAlive bool) State {
 func (s State) IsAlive() bool {
 	return s == Alive
 }
+
+// ToRune converts a State to its corresponding rune. Alive -> '#'; Dead -> '+'.
+func (s State) ToRune() rune {
+	if s.IsAlive() {
+		return '#'
+	}
+	return '+'
+}

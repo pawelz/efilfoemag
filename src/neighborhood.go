@@ -47,6 +47,7 @@ const (
 var (
 	ancestorsOfAlive []Neighborhood
 	ancestorsOfDead []Neighborhood
+	sides = []Side{NW, N, NE, W, C, E, SW, S, SE}
 )
 
 func init() {
@@ -211,7 +212,6 @@ func Parse(n string) (Neighborhood, error) {
 		if sideIterator >= 9 {
 			return 0, fmt.Errorf("")
 		}
-		sides := []Side{NW, N, NE, W, C, E, SW, S, SE}
 		side := sides[sideIterator]
 		sideIterator++
 		return uint(side), nil
@@ -234,4 +234,16 @@ func Parse(n string) (Neighborhood, error) {
 		return 0, fmt.Errorf("invalid Neighborhood, want exactly 9 meaningful characters ('#' or '+'), got: %q", n)
 	}
 	return v, nil
+}
+
+// ToStr renders a Neighborhood as a human readable string.
+func (n Neighborhood) ToStr() string {
+	var v string
+	for i, s := range sides {
+		v += string(state.Of(n&(1<<uint(s)) != 0).ToRune())
+		if i == 2 || i == 5 {
+			v += ","
+		}
+	}
+	return v
 }
