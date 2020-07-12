@@ -18,7 +18,7 @@ type State bool
 
 const (
 	Alive State = true
-	Dead State = false
+	Dead  State = false
 )
 
 // Of converts a boolean to the corresponding State.

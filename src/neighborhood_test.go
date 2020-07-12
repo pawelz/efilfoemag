@@ -601,43 +601,43 @@ func testName(t *testing.T, n string, k string, dist int, side Side) string {
 
 func TestMask(t *testing.T) {
 	for _, td := range []struct {
-		input Side
+		input    Side
 		expected uint16
 	}{
 		{
-			input: NW,
+			input:    NW,
 			expected: 0x1ff - 0x100,
 		},
 		{
-			input: N,
+			input:    N,
 			expected: 0x1ff - 0x080,
 		},
 		{
-			input: NE,
+			input:    NE,
 			expected: 0x1ff - 0x040,
 		},
 		{
-			input: W,
+			input:    W,
 			expected: 0x1ff - 0x020,
 		},
 		{
-			input: C,
+			input:    C,
 			expected: 0x1ff - 0x010,
 		},
 		{
-			input: E,
+			input:    E,
 			expected: 0x1ff - 0x008,
 		},
 		{
-			input: SW,
+			input:    SW,
 			expected: 0x1ff - 0x004,
 		},
 		{
-			input: S,
+			input:    S,
 			expected: 0x1ff - 0x002,
 		},
 		{
-			input: SE,
+			input:    SE,
 			expected: 0x1ff - 0x001,
 		},
 	} {
@@ -660,7 +660,7 @@ func TestSet(t *testing.T) {
 			n: `+++
 			    +++
 			    +++`,
-			side: NW,
+			side:  NW,
 			value: state.Alive,
 			expected: `#++
 			           +++
@@ -670,7 +670,7 @@ func TestSet(t *testing.T) {
 			n: `+++
 			    +++
 			    +++`,
-			side: N,
+			side:  N,
 			value: state.Alive,
 			expected: `+#+
 			           +++
@@ -680,7 +680,7 @@ func TestSet(t *testing.T) {
 			n: `+++
 			    +++
 			    +++`,
-			side: NE,
+			side:  NE,
 			value: state.Alive,
 			expected: `++#
 			           +++
@@ -690,7 +690,7 @@ func TestSet(t *testing.T) {
 			n: `+++
 			    +++
 			    +++`,
-			side: W,
+			side:  W,
 			value: state.Alive,
 			expected: `+++
 			           #++
@@ -700,7 +700,7 @@ func TestSet(t *testing.T) {
 			n: `+++
 			    +++
 			    +++`,
-			side: C,
+			side:  C,
 			value: state.Alive,
 			expected: `+++
 			           +#+
@@ -710,7 +710,7 @@ func TestSet(t *testing.T) {
 			n: `+++
 			    +++
 			    +++`,
-			side: E,
+			side:  E,
 			value: state.Alive,
 			expected: `+++
 			           ++#
@@ -720,7 +720,7 @@ func TestSet(t *testing.T) {
 			n: `+++
 			    +++
 			    +++`,
-			side: SW,
+			side:  SW,
 			value: state.Alive,
 			expected: `+++
 			           +++
@@ -730,7 +730,7 @@ func TestSet(t *testing.T) {
 			n: `+++
 			    +++
 			    +++`,
-			side: S,
+			side:  S,
 			value: state.Alive,
 			expected: `+++
 			           +++
@@ -740,7 +740,7 @@ func TestSet(t *testing.T) {
 			n: `+++
 			    +++
 			    +++`,
-			side: SE,
+			side:  SE,
 			value: state.Alive,
 			expected: `+++
 			           +++
@@ -750,7 +750,7 @@ func TestSet(t *testing.T) {
 			n: `###
 			    ###
 			    ###`,
-			side: NW,
+			side:  NW,
 			value: state.Dead,
 			expected: `+##
 			           ###
@@ -760,7 +760,7 @@ func TestSet(t *testing.T) {
 			n: `###
 			    ###
 			    ###`,
-			side: N,
+			side:  N,
 			value: state.Dead,
 			expected: `#+#
 			           ###
@@ -770,7 +770,7 @@ func TestSet(t *testing.T) {
 			n: `###
 			    ###
 			    ###`,
-			side: NE,
+			side:  NE,
 			value: state.Dead,
 			expected: `##+
 			           ###
@@ -780,7 +780,7 @@ func TestSet(t *testing.T) {
 			n: `###
 			    ###
 			    ###`,
-			side: W,
+			side:  W,
 			value: state.Dead,
 			expected: `###
 			           +##
@@ -790,7 +790,7 @@ func TestSet(t *testing.T) {
 			n: `###
 			    ###
 			    ###`,
-			side: C,
+			side:  C,
 			value: state.Dead,
 			expected: `###
 			           #+#
@@ -800,7 +800,7 @@ func TestSet(t *testing.T) {
 			n: `###
 			    ###
 			    ###`,
-			side: E,
+			side:  E,
 			value: state.Dead,
 			expected: `###
 			           ##+
@@ -810,7 +810,7 @@ func TestSet(t *testing.T) {
 			n: `###
 			    ###
 			    ###`,
-			side: SW,
+			side:  SW,
 			value: state.Dead,
 			expected: `###
 			           ###
@@ -820,7 +820,7 @@ func TestSet(t *testing.T) {
 			n: `###
 			    ###
 			    ###`,
-			side: S,
+			side:  S,
 			value: state.Dead,
 			expected: `###
 			           ###
@@ -830,7 +830,7 @@ func TestSet(t *testing.T) {
 			n: `###
 			    ###
 			    ###`,
-			side: SE,
+			side:  SE,
 			value: state.Dead,
 			expected: `###
 			           ###

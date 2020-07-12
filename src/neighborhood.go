@@ -48,8 +48,8 @@ const (
 
 var (
 	ancestorsOfAlive []Neighborhood
-	ancestorsOfDead []Neighborhood
-	sides = []Side{NW, N, NE, W, C, E, SW, S, SE}
+	ancestorsOfDead  []Neighborhood
+	sides            = []Side{NW, N, NE, W, C, E, SW, S, SE}
 )
 
 func init() {
@@ -100,7 +100,7 @@ func (s Side) ToStr() string {
 }
 
 func mask(s Side) uint16 {
-	return 0x1ff & ^(1<<uint(s))
+	return 0x1ff & ^(1 << uint(s))
 }
 
 // NW returns the state of the NW cell of the neighborhood.

@@ -56,7 +56,7 @@ func stripFinalChar(s string) string {
 	if s == "" {
 		return ""
 	}
-	return s[:len(s) - 1]
+	return s[:len(s)-1]
 }
 
 // Parse parses the content of .efil file to produce a Canvas object.
@@ -135,7 +135,7 @@ func (c *Canvas) Get(x, y uint) (state.State, error) {
 		return state.Dead, fmt.Errorf("cannot Get: %v", err)
 	}
 	octet := c.b[c.byteshift(x, y)]
-	if octet & bitmask(x) != uint8(0) {
+	if octet&bitmask(x) != uint8(0) {
 		return state.Alive, nil
 	}
 	return state.Dead, nil
