@@ -97,6 +97,10 @@ func (s Side) ToStr() string {
 	return fmt.Sprintf("[invalid side %d]", s)
 }
 
+func mask(s Side) uint16 {
+	return 0x1ff & ^(1<<uint(s))
+}
+
 // NW returns the state of the NW cell of the neighborhood.
 func (n Neighborhood) NW() state.State {
 	return state.Of(n&(1<<uint(NW)) != 0)
@@ -140,6 +144,17 @@ func (n Neighborhood) S() state.State {
 // SE returns the state of the SE cell of the neighborhood.
 func (n Neighborhood) SE() state.State {
 	return state.Of(n&(1<<uint(SE)) != 0)
+}
+
+// Set sets the given side of the neighborhood to a vaue.
+func (n *Neighborhood) Set(side Side, s state.State) {
+	var b uint16
+	if s.IsAlive() {
+		b = 1
+	} else {
+		b = 0
+	}
+	*n = Neighborhood((uint16(*n) & mask(side)) | b<<uint(side))
 }
 
 // Matches checks whether the other neighborhood matches the current at given distance and side.

@@ -41,3 +41,11 @@ func (s State) ToRune() rune {
 	}
 	return '+'
 }
+
+// ToStr converts a State to a human readable string.
+func (s State) ToStr() string {
+	if s.IsAlive() {
+		return "Alive"
+	}
+	return "Dead"
+}

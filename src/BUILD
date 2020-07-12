@@ -48,6 +48,9 @@ go_test(
     name = "neighborhood_test",
     srcs = ["neighborhood_test.go"],
     embed = [":neighborhood"],
+    deps = [
+        ":state",
+    ],
 )
 
 go_library(

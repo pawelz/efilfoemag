@@ -17,6 +17,8 @@ package neighborhood
 import (
 	"fmt"
 	"testing"
+
+	"github.com/pawelz/efilfoemag/src/state"
 )
 
 func TestParse(t *testing.T) {
@@ -595,6 +597,261 @@ func testName(t *testing.T, n string, k string, dist int, side Side) string {
 		return p.ToStr()
 	}
 	return fmt.Sprintf("%q matches %q at distance %d side %s", sanitize(n), sanitize(k), dist, side.ToStr())
+}
+
+func TestMask(t *testing.T) {
+	for _, td := range []struct {
+		input Side
+		expected uint16
+	}{
+		{
+			input: NW,
+			expected: 0x1ff - 0x100,
+		},
+		{
+			input: N,
+			expected: 0x1ff - 0x080,
+		},
+		{
+			input: NE,
+			expected: 0x1ff - 0x040,
+		},
+		{
+			input: W,
+			expected: 0x1ff - 0x020,
+		},
+		{
+			input: C,
+			expected: 0x1ff - 0x010,
+		},
+		{
+			input: E,
+			expected: 0x1ff - 0x008,
+		},
+		{
+			input: SW,
+			expected: 0x1ff - 0x004,
+		},
+		{
+			input: S,
+			expected: 0x1ff - 0x002,
+		},
+		{
+			input: SE,
+			expected: 0x1ff - 0x001,
+		},
+	} {
+		t.Run(td.input.ToStr(), func(t *testing.T) {
+			if got := mask(td.input); got != td.expected {
+				t.Errorf("expected %x got %x", td.expected, got)
+			}
+		})
+	}
+}
+
+func TestSet(t *testing.T) {
+	for _, td := range []struct {
+		n        string
+		side     Side
+		value    state.State
+		expected string
+	}{
+		{
+			n: `+++
+			    +++
+			    +++`,
+			side: NW,
+			value: state.Alive,
+			expected: `#++
+			           +++
+			           +++`,
+		},
+		{
+			n: `+++
+			    +++
+			    +++`,
+			side: N,
+			value: state.Alive,
+			expected: `+#+
+			           +++
+			           +++`,
+		},
+		{
+			n: `+++
+			    +++
+			    +++`,
+			side: NE,
+			value: state.Alive,
+			expected: `++#
+			           +++
+			           +++`,
+		},
+		{
+			n: `+++
+			    +++
+			    +++`,
+			side: W,
+			value: state.Alive,
+			expected: `+++
+			           #++
+			           +++`,
+		},
+		{
+			n: `+++
+			    +++
+			    +++`,
+			side: C,
+			value: state.Alive,
+			expected: `+++
+			           +#+
+			           +++`,
+		},
+		{
+			n: `+++
+			    +++
+			    +++`,
+			side: E,
+			value: state.Alive,
+			expected: `+++
+			           ++#
+			           +++`,
+		},
+		{
+			n: `+++
+			    +++
+			    +++`,
+			side: SW,
+			value: state.Alive,
+			expected: `+++
+			           +++
+			           #++`,
+		},
+		{
+			n: `+++
+			    +++
+			    +++`,
+			side: S,
+			value: state.Alive,
+			expected: `+++
+			           +++
+			           +#+`,
+		},
+		{
+			n: `+++
+			    +++
+			    +++`,
+			side: SE,
+			value: state.Alive,
+			expected: `+++
+			           +++
+			           ++#`,
+		},
+		{
+			n: `###
+			    ###
+			    ###`,
+			side: NW,
+			value: state.Dead,
+			expected: `+##
+			           ###
+			           ###`,
+		},
+		{
+			n: `###
+			    ###
+			    ###`,
+			side: N,
+			value: state.Dead,
+			expected: `#+#
+			           ###
+			           ###`,
+		},
+		{
+			n: `###
+			    ###
+			    ###`,
+			side: NE,
+			value: state.Dead,
+			expected: `##+
+			           ###
+			           ###`,
+		},
+		{
+			n: `###
+			    ###
+			    ###`,
+			side: W,
+			value: state.Dead,
+			expected: `###
+			           +##
+			           ###`,
+		},
+		{
+			n: `###
+			    ###
+			    ###`,
+			side: C,
+			value: state.Dead,
+			expected: `###
+			           #+#
+			           ###`,
+		},
+		{
+			n: `###
+			    ###
+			    ###`,
+			side: E,
+			value: state.Dead,
+			expected: `###
+			           ##+
+			           ###`,
+		},
+		{
+			n: `###
+			    ###
+			    ###`,
+			side: SW,
+			value: state.Dead,
+			expected: `###
+			           ###
+			           +##`,
+		},
+		{
+			n: `###
+			    ###
+			    ###`,
+			side: S,
+			value: state.Dead,
+			expected: `###
+			           ###
+			           #+#`,
+		},
+		{
+			n: `###
+			    ###
+			    ###`,
+			side: SE,
+			value: state.Dead,
+			expected: `###
+			           ###
+			           ##+`,
+		},
+	} {
+		actual, err := Parse(td.n)
+		if err != nil {
+			t.Fatalf(err.Error())
+		}
+		want, err := Parse(td.expected)
+		if err != nil {
+			t.Fatalf(err.Error())
+		}
+		t.Run(fmt.Sprintf("%q.Set(%s, %s)", actual.ToStr(), td.side.ToStr(), td.value.ToStr()), func(t *testing.T) {
+			(&actual).Set(td.side, td.value)
+			if actual != want {
+				t.Errorf("expected %q got %q", want.ToStr(), actual.ToStr())
+			}
+		})
+	}
 }
 
 func TestMatches(t *testing.T) {
