@@ -14,10 +14,12 @@
 
 package neighborhood
 
-import "fmt"
+import (
+	"fmt"
 
-import "github.com/pawelz/efilfoemag/src/bits"
-import "github.com/pawelz/efilfoemag/src/state"
+	"github.com/pawelz/efilfoemag/src/bits"
+	"github.com/pawelz/efilfoemag/src/state"
+)
 
 type Neighborhood uint16
 
