@@ -1,5 +1,7 @@
 load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library", "go_test")
 
+load("//src:build_defs.bzl", "go_generated_test")
+
 go_library(
     name = "efilfoemag_lib",
     srcs = ["efilfoemag.go"],
@@ -69,6 +71,15 @@ go_test(
     srcs = ["canvas_test.go"],
     deps = [
         ":bits",
+    ],
+    embed = [":canvas"],
+)
+
+go_generated_test(
+    name = "canvas_gentest",
+    src = "canvas_testgen.py",
+    deps = [
+        ":state",
     ],
     embed = [":canvas"],
 )

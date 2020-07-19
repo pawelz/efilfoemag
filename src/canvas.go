@@ -141,6 +141,27 @@ func (c *Canvas) Get(x, y uint) (state.State, error) {
 	return state.Dead, nil
 }
 
+// torusGet returns the state of the cell at the given address assuming torus topology.
+//
+// This method assumes the torus topology on the canvas to resolve addresses
+// out of range. For performance and complexity reasons it can only resolve
+// addresses being one step out of range though.
+func (c *Canvas) torusGet(x, y int) (state.State, error) {
+	if x == -1 {
+		x = int(c.width) - 1;
+	}
+	if x == int(c.width) {
+		x = 0;
+	}
+	if y == -1 {
+		y = int(c.height) - 1;
+	}
+	if y == int(c.height) {
+		y = 0;
+	}
+	return c.Get(uint(x), uint(y))
+}
+
 // Set sets the state of the cell at the given address.
 func (c *Canvas) Set(x, y uint, s state.State) error {
 	if err := c.validateAddress(x, y); err != nil {
