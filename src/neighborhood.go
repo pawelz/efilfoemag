@@ -49,8 +49,8 @@ const (
 )
 
 var (
-	ancestorsOfAlive []Neighborhood
-	ancestorsOfDead  []Neighborhood
+	ancestorsOfAlive = &Set{}
+	ancestorsOfDead  = &Set{}
 	sides            = []Side{NW, N, NE, W, C, E, SW, S, SE}
 )
 
@@ -58,10 +58,10 @@ func init() {
 	var n Neighborhood
 	for n = 0; n < 0x200; n++ {
 		isAlive := func() {
-			ancestorsOfAlive = append(ancestorsOfAlive, n)
+			ancestorsOfAlive.Add(n)
 		}
 		isDead := func() {
-			ancestorsOfDead = append(ancestorsOfDead, n)
+			ancestorsOfDead.Add(n)
 		}
 		sumbit := bits.Sum(uint16(n))
 		switch {

@@ -968,15 +968,31 @@ func TestAncestors(t *testing.T) {
 	// 3. dead cell in the middle, exactly three living cells around, so this is
 	//    again 56.
 	// So in total there are 56+28+56 = 140 neighborhoods leading to an alive cell.
-	if l := len(ancestorsOfAlive); l != 140 {
-		t.Errorf("expected 140 ancestors of living, got: %d", l)
-	}
+	t.Run("ancestors of alive", func(t *testing.T) {
+		var counter int
+
+		for iter := ancestorsOfAlive.iterate(); iter.hasNext(); _ = iter.getNext() {
+			counter++
+		}
+
+		if counter != 140 {
+			t.Errorf("expected 140 ancestors of living, got: %d", counter)
+		}
+	})
 
 	// There are 2^9 = 512 all possible enighborhoods, meaning there are 512-140=372
 	// neighborhoods leading to a dead cell.
-	if l := len(ancestorsOfDead); l != 372 {
-		t.Errorf("expected 372 ancestors of dead, got: %d", l)
-	}
+	t.Run("ancestors of alive", func(t *testing.T) {
+		var counter int
+
+		for iter := ancestorsOfDead.iterate(); iter.hasNext(); _ = iter.getNext() {
+			counter++
+		}
+
+		if counter != 372 {
+			t.Errorf("expected 372 ancestors of dead, got: %d", counter)
+		}
+	})
 }
 
 func TestSetAddString(t *testing.T) {
