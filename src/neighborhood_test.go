@@ -1080,6 +1080,21 @@ func TestSetEquals(t *testing.T) {
 	}
 }
 
+func parseList(input []string, t *testing.T) *Set {
+	t.Helper()
+	rv := &Set{}
+	for _, g := range input {
+		parsed, err := Parse(g)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if err = rv.Add(parsed); err != nil {
+			t.Fatal(err)
+		}
+	}
+	return rv
+}
+
 type pairOfSets struct {
 	left []string
 	right []string
@@ -1128,20 +1143,6 @@ func TestShiftIntersect(t *testing.T) {
 			},
 		},
 	} {
-		parseList := func(input []string, t *testing.T) *Set {
-			t.Helper()
-			rv := &Set{}
-			for _, g := range input {
-				parsed, err := Parse(g)
-				if err != nil {
-					t.Fatal(err)
-				}
-				if err = rv.Add(parsed); err != nil {
-					t.Fatal(err)
-				}
-			}
-			return rv
-		}
 		t.Run(td.name, func(t *testing.T) {
 			givenL := parseList(td.given.left, t)
 			givenR := parseList(td.given.right, t)
@@ -1156,6 +1157,45 @@ func TestShiftIntersect(t *testing.T) {
 			}
 			if !Equals(wantR, gotR) {
 				t.Errorf("the right set is invalid: want %v, got %v", wantR, gotR)
+			}
+		})
+	}
+}
+
+func TestSetCopy(t *testing.T) {
+	for _, td := range []struct{
+		name string
+		given []string
+		extra string
+	} {
+		{
+			name: "empty",
+			extra: "+++,+++,#++",
+		},
+		{
+			name: "one element",
+			given: []string{"+#+,++#,#++"},
+			extra: "+++,+++,#++",
+		},
+		{
+			name: "multiple elements",
+			given: []string{"+#+,++#,#++", "++#,++#,##+", "###,###,###"},
+			extra: "+++,+++,#++",
+		},
+	} {
+		t.Run(td.name, func(t *testing.T) {
+			given := parseList(td.given, t)
+			extra, err := Parse(td.extra)
+			if err != nil {
+				t.Fatal(err)
+			}
+			got := given.Copy()
+			if !Equals(given, got) {
+				t.Errorf("the copy of a set is not equal to the original: want %v, got %v", given, got)
+			}
+			got.Add(extra)
+			if Equals(given, got) {
+				t.Errorf("after modification the copy (%v) is still equal to the original (%v)", got, given)
 			}
 		})
 	}

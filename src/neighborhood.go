@@ -306,6 +306,15 @@ func (s *Set) Contains(n Neighborhood) (bool, error) {
 	return (*s)[theByte] & (b10000000 >> theBit) > 0, nil
 }
 
+// Copy returns a copy of the Set.
+func (s *Set) Copy() *Set {
+	c := &Set{}
+	for i, v := range s {
+		c[i] = v
+	}
+	return c
+}
+
 // setIterator implements an iterator over a Set.
 type setIterator struct {
 	s *Set
