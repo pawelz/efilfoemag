@@ -338,3 +338,48 @@ func (s *Set) String() string {
 	rv = fmt.Sprintf("%s]", rv)
 	return rv
 }
+
+// ShiftIntersect performs "shift & intersect" operation.
+//
+// Given two sets of neighborhoods (left and right), tries to find all elements
+// that overlap with at least one element in the other set if shifted to the
+// given side.
+//
+// Returns two sets containing "overlapping" elements each of the inupt sets.
+func ShiftIntersect(left *Set, right *Set, s Side) (*Set, *Set, error) {
+	resL := &Set{}
+	resR := &Set{}
+	var l, r Neighborhood
+	for l = 0; l < 0x200; l++ {
+		lc, err := left.Contains(l)
+		if err != nil {
+			return nil, nil, fmt.Errorf("ShiftIntersect left.Contains: %v", err)
+		}
+		if !lc {
+			continue
+		}
+		// TODO(pawelz@execve.pl): Set needs some iterator util.
+		for r = 0; r < 0x200; r++ {
+			rc, err := right.Contains(r)
+			if err != nil {
+				return nil, nil, fmt.Errorf("ShiftIntersect right.Contains: %v", err)
+			}
+			if !rc {
+				continue
+			}
+			match, err := l.Matches(r, 1, s)
+			if err != nil {
+				return nil, nil, fmt.Errorf("ShiftIntersect Matches: %v", err)
+			}
+			if match {
+				if err := resL.Add(l); err != nil {
+					return nil, nil, fmt.Errorf("ShiftIntersect resL.Add: %v", err)
+				}
+				if err := resR.Add(r); err != nil {
+					return nil, nil, fmt.Errorf("ShiftIntersect resR.Add: %v", err)
+				}
+			}
+		}
+	}
+	return resL, resR, nil
+}

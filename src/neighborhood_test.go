@@ -1063,3 +1063,84 @@ func TestSetEquals(t *testing.T) {
 		t.Errorf("expected not equal sets, got left=%v, right=%v", a, b)
 	}
 }
+
+type pairOfSets struct {
+	left []string
+	right []string
+}
+
+func TestShiftIntersect(t *testing.T) {
+	for _, td := range []struct{
+		name string
+		given pairOfSets
+		side Side
+		want pairOfSets
+	} {
+		{
+			name: "empty",
+			side: E,
+		},
+		{
+			name: "one matching element",
+			given: pairOfSets{
+				left: []string{"+#+,++#, #++"},
+				right: []string{"#++,+##, +++"},
+			},
+			side: E,
+			want: pairOfSets{
+				left: []string{"+#+,++#, #++"},
+				right: []string{"#++,+##, +++"},
+			},
+		},
+		{
+			name: "no matching elements",
+			given: pairOfSets{
+				left: []string{"+#+,++#, #++"},
+				right: []string{"#++,++#, +++"},
+			},
+		},
+		{
+			name: "multiple matching elements",
+			given: pairOfSets{
+				left: []string{"+#+,++#,#++", "++#,++#,##+", "###,###,###"},
+				right: []string{"#++,+##,+++", "+##,+#+,#+#", "+++,+++,+++"},
+			},
+			side: E,
+			want: pairOfSets{
+				left: []string{"+#+,++#,#++", "++#,++#,##+"},
+				right: []string{"#++,+##,+++", "+##,+#+,#+#"},
+			},
+		},
+	} {
+		parseList := func(input []string, t *testing.T) *Set {
+			t.Helper()
+			rv := &Set{}
+			for _, g := range input {
+				parsed, err := Parse(g)
+				if err != nil {
+					t.Fatal(err)
+				}
+				if err = rv.Add(parsed); err != nil {
+					t.Fatal(err)
+				}
+			}
+			return rv
+		}
+		t.Run(td.name, func(t *testing.T) {
+			givenL := parseList(td.given.left, t)
+			givenR := parseList(td.given.right, t)
+			wantL := parseList(td.want.left, t)
+			wantR := parseList(td.want.right, t)
+			gotL, gotR, err := ShiftIntersect(givenL, givenR, td.side)
+			if err != nil {
+				t.Fatalf("ShiftIntersect returned error: %v", err)
+			}
+			if !Equals(wantL, gotL) {
+				t.Errorf("the left set is invalid: want %v, got %v", wantL, gotL)
+			}
+			if !Equals(wantR, gotR) {
+				t.Errorf("the right set is invalid: want %v, got %v", wantR, gotR)
+			}
+		})
+	}
+}
