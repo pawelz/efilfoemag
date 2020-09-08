@@ -14,9 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Generates testcases for canvas.torusGet"""
+"""Generates testcases for grid.torusGet"""
 
-canvas = [
+grid = [
     "++#+++++",
     "#++#++++",
     "#+###+++",
@@ -35,10 +35,10 @@ for x in range(-1, 9):
 			x: {},
 			y: {},
 			expected: state.{},
-		}},""".format(x, y, "Alive" if canvas[y % 8][x % 8] == "#" else "Dead"))
+		}},""".format(x, y, "Alive" if grid[y % 8][x % 8] == "#" else "Dead"))
 
 print("""
-package canvas
+package grid
 
 import (
 	"fmt"
@@ -48,7 +48,7 @@ import (
 )
 
 func TestTorusGet(t *testing.T) {{
-	testCanvas, err := Parse([]byte(`8x8
+	testGrid, err := Parse([]byte(`8x8
 {}
 `))
 	if err != nil {{
@@ -62,7 +62,7 @@ func TestTorusGet(t *testing.T) {{
 {}
 	}}{{
 		t.Run(fmt.Sprintf("x=%d,y=%d", td.x, td.y), func(t *testing.T) {{
-			actual, err := testCanvas.torusGet(td.x, td.y)
+			actual, err := testGrid.torusGet(td.x, td.y)
 			if err != nil {{
 				t.Errorf("expected no error; got %v", err)
 			}}
@@ -72,4 +72,4 @@ func TestTorusGet(t *testing.T) {{
 		}})
 	}}
 }}
-""".format("\n".join(canvas), "\n".join(cases)))
+""".format("\n".join(grid), "\n".join(cases)))

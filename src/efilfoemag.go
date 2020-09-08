@@ -55,5 +55,5 @@ func main() {
 		log.Fatalf("The input file %q is too large. Must be smaller than %dB.", inputCap)
 	}
 
-	//c = canvas.Parse(inputData)
+	//c = grid.Parse(inputData)
 }

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package canvas
+package grid
 
 import (
 	"testing"
@@ -23,13 +23,13 @@ import (
 func TestEqualsTo(t *testing.T) {
 	for _, td := range []struct {
 		name     string
-		this     *Canvas
-		that     *Canvas
+		this     *Grid
+		that     *Grid
 		expected bool
 	}{
 		{
 			name: "simply equal",
-			this: &Canvas{
+			this: &Grid{
 				width:  8,
 				height: 8,
 				b: []uint8{
@@ -43,7 +43,7 @@ func TestEqualsTo(t *testing.T) {
 					bits.Byte("00000000"),
 				},
 			},
-			that: &Canvas{
+			that: &Grid{
 				width:  8,
 				height: 8,
 				b: []uint8{
@@ -61,7 +61,7 @@ func TestEqualsTo(t *testing.T) {
 		},
 		{
 			name: "bad width",
-			this: &Canvas{
+			this: &Grid{
 				width:  8,
 				height: 8,
 				b: []uint8{
@@ -75,7 +75,7 @@ func TestEqualsTo(t *testing.T) {
 					bits.Byte("00000000"),
 				},
 			},
-			that: &Canvas{
+			that: &Grid{
 				width:  16,
 				height: 8,
 				b: []uint8{
@@ -93,7 +93,7 @@ func TestEqualsTo(t *testing.T) {
 		},
 		{
 			name: "bad height",
-			this: &Canvas{
+			this: &Grid{
 				width:  8,
 				height: 8,
 				b: []uint8{
@@ -107,7 +107,7 @@ func TestEqualsTo(t *testing.T) {
 					bits.Byte("00000000"),
 				},
 			},
-			that: &Canvas{
+			that: &Grid{
 				width:  8,
 				height: 16,
 				b: []uint8{
@@ -125,7 +125,7 @@ func TestEqualsTo(t *testing.T) {
 		},
 		{
 			name: "bad pattern",
-			this: &Canvas{
+			this: &Grid{
 				width:  8,
 				height: 8,
 				b: []byte{
@@ -139,7 +139,7 @@ func TestEqualsTo(t *testing.T) {
 					bits.Byte("00000000"),
 				},
 			},
-			that: &Canvas{
+			that: &Grid{
 				width:  8,
 				height: 8,
 				b: []byte{
@@ -168,7 +168,7 @@ func TestParse(t *testing.T) {
 	for _, td := range []struct {
 		name     string
 		input    []byte
-		expected *Canvas
+		expected *Grid
 		failure  bool
 	}{
 		{
@@ -183,7 +183,7 @@ func TestParse(t *testing.T) {
 ++++#+++
 ++++++++
 `),
-			expected: &Canvas{
+			expected: &Grid{
 				width:  8,
 				height: 8,
 				b: []byte{

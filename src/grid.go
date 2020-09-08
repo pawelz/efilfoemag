@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package canvas
+package grid
 
 import (
 	"bufio"
@@ -28,24 +28,24 @@ const (
 	endl = byte('\n')
 )
 
-type Canvas struct {
+type Grid struct {
 	width  uint
 	height uint
 	b      []uint8
 }
 
-// create is a factory of blank Canvas objects.
-func create(width, height int) (*Canvas, error) {
+// create is a factory of blank Grid objects.
+func create(width, height int) (*Grid, error) {
 	if width <= 0 || height <= 0 {
-		return nil, fmt.Errorf("width and height of a Canvas must be positive, got: width = %d, height = %d", width, height)
+		return nil, fmt.Errorf("width and height of a Grid must be positive, got: width = %d, height = %d", width, height)
 	}
 	if w, h := width%8, height%8; w != 0 || h != 0 {
-		return nil, fmt.Errorf("width and height of a Canvas must be divisible by 8, got width = %d (mod 8 = %d), height = %d (mod 8 = %d)", width, w, height, h)
+		return nil, fmt.Errorf("width and height of a Grid must be divisible by 8, got width = %d (mod 8 = %d), height = %d (mod 8 = %d)", width, w, height, h)
 	}
 	if width < 8 || height < 8 {
-		return nil, fmt.Errorf("width and height of a Canvas must be greater or equal 8, got width = %d, height = %d", width, height)
+		return nil, fmt.Errorf("width and height of a Grid must be greater or equal 8, got width = %d, height = %d", width, height)
 	}
-	return &Canvas{
+	return &Grid{
 		width:  uint(width),
 		height: uint(height),
 		b:      make([]uint8, width*height/8),
@@ -59,8 +59,8 @@ func stripFinalChar(s string) string {
 	return s[:len(s)-1]
 }
 
-// Parse parses the content of .efil file to produce a Canvas object.
-func Parse(inputData []byte) (*Canvas, error) {
+// Parse parses the content of .efil file to produce a Grid object.
+func Parse(inputData []byte) (*Grid, error) {
 	r := bufio.NewReader(bytes.NewReader(inputData))
 	widthString, err := r.ReadString(byte('x'))
 	if err != nil {
@@ -81,15 +81,15 @@ func Parse(inputData []byte) (*Canvas, error) {
 		return nil, fmt.Errorf("error parsing height %q: %v", heightString, err)
 	}
 
-	canvas, err := create(width, height)
+	grid, err := create(width, height)
 	if err != nil {
-		return nil, fmt.Errorf("error creating canvas: %v", err)
+		return nil, fmt.Errorf("error creating grid: %v", err)
 	}
 
 	for rowNum := 0; rowNum < height; rowNum++ {
 		rowData, err := r.ReadBytes(endl)
 		if err != nil {
-			return nil, fmt.Errorf("error creating canvas while reading row %d: %v", rowNum, err)
+			return nil, fmt.Errorf("error creating grid while reading row %d: %v", rowNum, err)
 		}
 		if l := len(rowData); l != width+1 {
 			return nil, fmt.Errorf("error reading row %d, want %d characters (including \\n), got %d", rowNum, width+1, l)
@@ -107,14 +107,14 @@ func Parse(inputData []byte) (*Canvas, error) {
 					return nil, fmt.Errorf("encountered invalid byte %c at (%d, %d)", symbol, rowNum, oNum*8+bitNum)
 				}
 			}
-			canvas.b[rowNum*width/8+oNum] = octet
+			grid.b[rowNum*width/8+oNum] = octet
 		}
 	}
 
-	return canvas, nil
+	return grid, nil
 }
 
-func (c *Canvas) byteshift(x, y uint) uint {
+func (c *Grid) byteshift(x, y uint) uint {
 	return y*c.width/8 + x/8
 }
 
@@ -122,7 +122,7 @@ func bitmask(x uint) uint8 {
 	return bits.Byte("10000000") >> (x % 8)
 }
 
-func (c *Canvas) validateAddress(x, y uint) error {
+func (c *Grid) validateAddress(x, y uint) error {
 	if x >= c.width || y >= c.height {
 		return fmt.Errorf("address (%d, %d) is out of band (0-%d, 0-%d)", x, y, c.width, c.height)
 	}
@@ -130,7 +130,7 @@ func (c *Canvas) validateAddress(x, y uint) error {
 }
 
 // Get returns the state of the cell at the given address.
-func (c *Canvas) Get(x, y uint) (state.State, error) {
+func (c *Grid) Get(x, y uint) (state.State, error) {
 	if err := c.validateAddress(x, y); err != nil {
 		return state.Dead, fmt.Errorf("cannot Get: %v", err)
 	}
@@ -143,10 +143,10 @@ func (c *Canvas) Get(x, y uint) (state.State, error) {
 
 // torusGet returns the state of the cell at the given address assuming torus topology.
 //
-// This method assumes the torus topology on the canvas to resolve addresses
+// This method assumes the torus topology on the grid to resolve addresses
 // out of range. For performance and complexity reasons it can only resolve
 // addresses being one step out of range though.
-func (c *Canvas) torusGet(x, y int) (state.State, error) {
+func (c *Grid) torusGet(x, y int) (state.State, error) {
 	if x == -1 {
 		x = int(c.width) - 1;
 	}
@@ -163,7 +163,7 @@ func (c *Canvas) torusGet(x, y int) (state.State, error) {
 }
 
 // Set sets the state of the cell at the given address.
-func (c *Canvas) Set(x, y uint, s state.State) error {
+func (c *Grid) Set(x, y uint, s state.State) error {
 	if err := c.validateAddress(x, y); err != nil {
 		return fmt.Errorf("cannot Get: %v", err)
 	}
@@ -171,8 +171,8 @@ func (c *Canvas) Set(x, y uint, s state.State) error {
 	return nil
 }
 
-// equalsTo compares this canvas to anover one.
-func (c *Canvas) equalsTo(other *Canvas) bool {
+// equalsTo compares this grid to anover one.
+func (c *Grid) equalsTo(other *Grid) bool {
 	if c.height != other.height {
 		return false
 	}

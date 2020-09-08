@@ -56,30 +56,30 @@ go_test(
 )
 
 go_library(
-    name = "canvas",
-    srcs = ["canvas.go"],
+    name = "grid",
+    srcs = ["grid.go"],
     deps = [
         ":bits",
         ":state",
     ],
-    importpath = "github.com/pawelz/efilfoemag/src/canvas",
+    importpath = "github.com/pawelz/efilfoemag/src/grid",
     visibility = ["//visibility:public"],
 )
 
 go_test(
-    name = "canvas_test",
-    srcs = ["canvas_test.go"],
+    name = "grid_test",
+    srcs = ["grid_test.go"],
     deps = [
         ":bits",
     ],
-    embed = [":canvas"],
+    embed = [":grid"],
 )
 
 go_generated_test(
-    name = "canvas_gentest",
-    src = "canvas_testgen.py",
+    name = "grid_gentest",
+    src = "grid_testgen.py",
     deps = [
         ":state",
     ],
-    embed = [":canvas"],
+    embed = [":grid"],
 )
