@@ -309,22 +309,21 @@ func (s *Set) Contains(n Neighborhood) (bool, error) {
 // setIterator implements an iterator over a Set.
 type setIterator struct {
 	s *Set
-	next Neighborhood
+	v Neighborhood
 }
 
-// hasNext returns true iff there is any element left in the iterator.
-func (i *setIterator) hasNext() bool {
-	return i.next < 0x200
+// more returns true iff there are elements left.
+func (i *setIterator) more() bool {
+	return i.v < 0x200
 }
 
-// getNext returns the next element.
+// next moves the iterator to the next element.
 //
-// This is only well behaving if hasNext() == true. Otherwise the behavior is
+// This is only well behaving if more() == true. Otherwise the behavior is
 // undefined and may actually depend on how many times this is called.
-func (i *setIterator) getNext() Neighborhood {
-	rv := i.next
-	for i.next++; i.next < 0x200; i.next++ {
-		c, err := i.s.Contains(i.next)
+func (i *setIterator) next() {
+	for i.v++; i.v < 0x200; i.v++ {
+		c, err := i.s.Contains(i.v)
 		if err != nil {
 			panic(err.Error())
 		}
@@ -332,16 +331,20 @@ func (i *setIterator) getNext() Neighborhood {
 			break;
 		}
 	}
-	return rv
 }
 
-// iterate makes a new iterator over the set.
-func (s *Set) iterate() *setIterator {
+// get returns the current value referenced by the iterator.
+func (i *setIterator) get() Neighborhood {
+	return i.v
+}
+
+// iterator makes a new iterator over the set.
+func (s *Set) iterator() *setIterator {
 	rv := &setIterator{
 		s: s,
-		next: 0xffff,
+		v: 0xffff,
 	}
-	_ = rv.getNext()
+	rv.next()
 	return rv
 }
 
@@ -388,21 +391,17 @@ func (s *Set) String() string {
 func ShiftIntersect(left *Set, right *Set, s Side) (*Set, *Set, error) {
 	resL := &Set{}
 	resR := &Set{}
-	iteL := left.iterate()
-	for iteL.hasNext() {
-		l := iteL.getNext()
-		iteR := right.iterate()
-		for iteR.hasNext() {
-			r := iteR.getNext()
-			match, err := l.Matches(r, 1, s)
+	for iteL := left.iterator(); iteL.more(); iteL.next() {
+		for iteR := right.iterator(); iteR.more(); iteR.next() {
+			match, err := iteL.get().Matches(iteR.get(), 1, s)
 			if err != nil {
 				return nil, nil, fmt.Errorf("ShiftIntersect Matches: %v", err)
 			}
 			if match {
-				if err := resL.Add(l); err != nil {
+				if err := resL.Add(iteL.get()); err != nil {
 					return nil, nil, fmt.Errorf("ShiftIntersect resL.Add: %v", err)
 				}
-				if err := resR.Add(r); err != nil {
+				if err := resR.Add(iteR.get()); err != nil {
 					return nil, nil, fmt.Errorf("ShiftIntersect resR.Add: %v", err)
 				}
 			}

@@ -971,7 +971,7 @@ func TestAncestors(t *testing.T) {
 	t.Run("ancestors of alive", func(t *testing.T) {
 		var counter int
 
-		for iter := ancestorsOfAlive.iterate(); iter.hasNext(); _ = iter.getNext() {
+		for iter := ancestorsOfAlive.iterator(); iter.more(); iter.next() {
 			counter++
 		}
 
@@ -985,7 +985,7 @@ func TestAncestors(t *testing.T) {
 	t.Run("ancestors of alive", func(t *testing.T) {
 		var counter int
 
-		for iter := ancestorsOfDead.iterate(); iter.hasNext(); _ = iter.getNext() {
+		for iter := ancestorsOfDead.iterator(); iter.more(); iter.next() {
 			counter++
 		}
 
