@@ -44,6 +44,8 @@ const (
 	SW Side = 2
 	S  Side = 1
 	SE Side = 0
+
+	b10000000 uint8 = 0x80
 )
 
 var (
@@ -263,4 +265,76 @@ func (n Neighborhood) ToStr() string {
 		}
 	}
 	return v
+}
+
+// Set represents a set of Neighborhoods.
+//
+// There are 2^9 (= 8*64) possible Neighborhood. So we represent the set as an
+// array of 64 bytes. The bit at index n is set if the Neighborhood n belongs to
+// the set.
+//
+// TODO(pawelz@execve.pl): since we are overoptimizing anyway, would this be
+//                         more efficient if it used uint32 or even uint64?
+type Set [64]uint8
+
+// Returns the address of the neighborhood in the Set.
+func setAddress(n Neighborhood) (uint8, uint8, error) {
+	if n > 0x1ff {
+		return 0xff, 0xff, fmt.Errorf("Illegal Neighborhood. Want integer in 0 .. 0x1ff, got %x.", n)
+	}
+	theByte := uint8(n / 8)
+	theBit := uint8(n % 8)
+	return theByte, theBit, nil
+}
+
+// Add addes a Neighborhood to the Set.
+func (s *Set) Add(n Neighborhood) error {
+	theByte, theBit, err := setAddress(n)
+	if err != nil {
+		return err
+	}
+  (*s)[theByte] |= (b10000000 >> theBit)
+	return nil
+}
+
+// Contains checks whether the Set contains a Neighborhood.
+func (s *Set) Contains(n Neighborhood) (bool, error) {
+	theByte, theBit, err := setAddress(n)
+	if err != nil {
+		return false, err
+	}
+	return (*s)[theByte] & (b10000000 >> theBit) > 0, nil
+}
+
+// Equals returns true if neighborhoods are equal.
+func Equals(first *Set, second *Set) bool {
+	for i := 0; i < 64; i++ {
+		if (*first)[i] != (*second)[i] {
+			return false
+		}
+	}
+	return true
+}
+
+// Implements fmt.Stringer
+func (s *Set) String() string {
+	ns := []Neighborhood{}
+	for n := 0; n < 0x200; n++ {
+		c, err := s.Contains(Neighborhood(n))
+		if err != nil {
+			return fmt.Sprintf("[ERROR: %v]", err)
+		}
+		if c {
+			ns = append(ns, Neighborhood(n))
+		}
+	}
+	if len(ns) == 0 {
+		return "[]"
+	}
+	rv := fmt.Sprintf("[%q", ns[0].ToStr())
+	for _, n := range ns[1:] {
+		rv = fmt.Sprintf("%s, %q", rv, n.ToStr())
+	}
+	rv = fmt.Sprintf("%s]", rv)
+	return rv
 }

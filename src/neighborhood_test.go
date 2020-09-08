@@ -978,3 +978,88 @@ func TestAncestors(t *testing.T) {
 		t.Errorf("expected 372 ancestors of dead, got: %d", l)
 	}
 }
+
+func TestSetAddString(t *testing.T) {
+	for _, td := range []struct{
+		given []string
+		want string
+	} {
+		{
+			given: []string{},
+			want: "[]",
+		},
+		{
+			given: []string{"### +++ ###"},
+			want: "[\"###,+++,###\"]",
+		},
+		{
+			given: []string{
+				"##+ #++ +#+",
+				"+++ #++ +#+",
+				"##+ ### ##+",
+				"+#+ #++ +++",
+			},
+			want: `["+++,#++,+#+", "+#+,#++,+++", "##+,#++,+#+", "##+,###,##+"]`,
+		},
+		{
+			given: []string{
+				"##+ #++ +#+",
+				"##+ #++ +#+",
+				"+#+ #++ +++",
+				"+#+ #++ +++",
+			},
+			want: `["+#+,#++,+++", "##+,#++,+#+"]`,
+		},
+	} {
+		t.Run(td.want, func(t *testing.T) {
+			a := &Set{}
+			for _, g := range td.given {
+				parsed, err := Parse(g)
+				if err != nil {
+					t.Fatal(err)
+				}
+				err = a.Add(parsed)
+				if err != nil {
+					t.Fatal(err)
+				}
+			}
+			if got := a.String(); td.want != got {
+				t.Errorf("want %s got %s", td.want, got)
+			}
+		})
+	}
+}
+
+func TestSetEquals(t *testing.T) {
+	a := &Set{}
+	b := &Set{}
+	for _, n := range []string{
+		"##+ #++ +#+",
+		"+++ #++ +#+",
+		"##+ ### ##+",
+		"+#+ #++ +++",
+	} {
+		parsed, err := Parse(n)
+		if err != nil {
+			t.Errorf("unable to parse testdata %q: %v", n, err)
+		}
+	  if err = a.Add(parsed); err != nil {
+		  t.Errorf("unable to add %q to 'a'; want no error, got %v", n, err)
+	  }
+	  if err = b.Add(parsed); err != nil {
+		  t.Errorf("unable to add %q to 'a'; want no error, got %v", n, err)
+	  }
+	}
+	if !Equals(a, b) {
+		t.Errorf("expected equal sets, got left=%v, right=%v", a, b)
+	}
+	n := "### +++ ###"
+	parsed, err := Parse(n)
+	if err != nil {
+		t.Errorf("unable to parse testdata %q: %v", n, err)
+	}
+	a.Add(parsed)
+	if Equals(a, b) {
+		t.Errorf("expected not equal sets, got left=%v, right=%v", a, b)
+	}
+}
