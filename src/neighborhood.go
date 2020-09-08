@@ -306,6 +306,45 @@ func (s *Set) Contains(n Neighborhood) (bool, error) {
 	return (*s)[theByte] & (b10000000 >> theBit) > 0, nil
 }
 
+// setIterator implements an iterator over a Set.
+type setIterator struct {
+	s *Set
+	next Neighborhood
+}
+
+// hasNext returns true iff there is any element left in the iterator.
+func (i *setIterator) hasNext() bool {
+	return i.next < 0x200
+}
+
+// getNext returns the next element.
+//
+// This is only well behaving if hasNext() == true. Otherwise the behavior is
+// undefined and may actually depend on how many times this is called.
+func (i *setIterator) getNext() Neighborhood {
+	rv := i.next
+	for i.next++; i.next < 0x200; i.next++ {
+		c, err := i.s.Contains(i.next)
+		if err != nil {
+			panic(err.Error())
+		}
+		if c {
+			break;
+		}
+	}
+	return rv
+}
+
+// iterate makes a new iterator over the set.
+func (s *Set) iterate() *setIterator {
+	rv := &setIterator{
+		s: s,
+		next: 0xffff,
+	}
+	_ = rv.getNext()
+	return rv
+}
+
 // Equals returns true if neighborhoods are equal.
 func Equals(first *Set, second *Set) bool {
 	for i := 0; i < 64; i++ {
@@ -349,24 +388,12 @@ func (s *Set) String() string {
 func ShiftIntersect(left *Set, right *Set, s Side) (*Set, *Set, error) {
 	resL := &Set{}
 	resR := &Set{}
-	var l, r Neighborhood
-	for l = 0; l < 0x200; l++ {
-		lc, err := left.Contains(l)
-		if err != nil {
-			return nil, nil, fmt.Errorf("ShiftIntersect left.Contains: %v", err)
-		}
-		if !lc {
-			continue
-		}
-		// TODO(pawelz@execve.pl): Set needs some iterator util.
-		for r = 0; r < 0x200; r++ {
-			rc, err := right.Contains(r)
-			if err != nil {
-				return nil, nil, fmt.Errorf("ShiftIntersect right.Contains: %v", err)
-			}
-			if !rc {
-				continue
-			}
+	iteL := left.iterate()
+	for iteL.hasNext() {
+		l := iteL.getNext()
+		iteR := right.iterate()
+		for iteR.hasNext() {
+			r := iteR.getNext()
 			match, err := l.Matches(r, 1, s)
 			if err != nil {
 				return nil, nil, fmt.Errorf("ShiftIntersect Matches: %v", err)
