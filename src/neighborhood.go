@@ -325,6 +325,16 @@ func (s *Set) Copy() *Set {
 	return c
 }
 
+// IsEmpty returns true iff the Set is empty.
+func (s *Set) IsEmpty() bool {
+	for i := 0; i < 64; i++ {
+		if s[i] != uint8(0) {
+			return false
+		}
+	}
+	return true
+}
+
 // setIterator implements an iterator over a Set.
 type setIterator struct {
 	s *Set

@@ -1095,6 +1095,42 @@ func parseList(input []string, t *testing.T) *Set {
 	return rv
 }
 
+func TestSetIsEmpty(t *testing.T) {
+	for _, td := range []struct{
+		name string
+		given []string
+		want bool
+	} {
+		{
+			name: "one empty enighborhood",
+			given: []string{
+				"+++ +++ +++",
+			},
+			want: false,
+		}, {
+			name: "multiple neighborhoods",
+		  given: []string{
+				"##+ #++ +#+",
+				"+++ #++ +#+",
+				"##+ ### ##+",
+				"+#+ #++ +++",
+		  },
+			want: false,
+		}, {
+			name: "no neighborhoods",
+			given: []string{},
+			want: true,
+		},
+	} {
+		t.Run(td.name, func(t *testing.T) {
+			s := parseList(td.given, t)
+			if got := s.IsEmpty(); got != td.want {
+				t.Errorf("for set %v want %v, got %v", td.given, td.want, got)
+			}
+		});
+	}
+}
+
 type pairOfSets struct {
 	left []string
 	right []string
