@@ -77,6 +77,16 @@ func init() {
 	}
 }
 
+// GetAncestorsOfAlive returns a new instance of a set representing all ancestors of a living cell.
+func GetAncestorsOfAlive() *Set {
+	return ancestorsOfAlive.Copy()
+}
+
+// GetAncestorsOfDead returns a new instance of a set representing all ancestors of a dead cell.
+func GetAncestorsOfDead() *Set {
+	return ancestorsOfDead.Copy()
+}
+
 func (s Side) ToStr() string {
 	switch s {
 	case NW:
