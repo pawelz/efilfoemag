@@ -171,6 +171,16 @@ func (c *Grid) Set(x, y uint, s state.State) error {
 	return nil
 }
 
+// Width returns the width of the grid.
+func (c *Grid) Width(uint) {
+	return c.width
+}
+
+// Height returns the height of the grid.
+func (c *Grid) Height(uint) {
+	return c.height
+}
+
 // equalsTo compares this grid to anover one.
 func (c *Grid) equalsTo(other *Grid) bool {
 	if c.height != other.height {
