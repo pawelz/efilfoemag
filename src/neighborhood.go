@@ -377,7 +377,7 @@ func (s *Set) iterator() *setIterator {
 	return rv
 }
 
-// Equals returns true if neighborhoods are equal.
+// Equals returns true if Sets of neighborhoods are equal.
 func Equals(first *Set, second *Set) bool {
 	for i := 0; i < 64; i++ {
 		if (*first)[i] != (*second)[i] {
